@@ -1,4 +1,4 @@
-install(FILES BistableRulkovMapModel.h HodgkinHuxleyModel.h
+install(FILES SimpleSynapsisPlasticityModel.h BistableRulkovMapModel.h HodgkinHuxleyModel.h
 	      RulkovMapModel.h FerdoMapModel.h MatsuokaModel.h
 	      SimpleOscillatorModel.h HindmarshRoseModel.h RowatSelverstonModel.h
 	      DiffusionSynapsisModel.h #DiscreteDiffusionSynapsisModel.h

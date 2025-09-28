@@ -34,9 +34,9 @@ int main(int argc, char **argv) {
   syn_args.params[Synapsis::Esyn] = -75;
   syn_args.params[Synapsis::sfast] = 0.2;
   syn_args.params[Synapsis::Vfast] = -50;
-  syn_args.params[Synapsis::steps_for_degradation] = 5;
-  syn_args.params[Synapsis::steps_remaining] = 5;
-  syn_args.params[Synapsis::previous_vpre] = 0;
+  syn_args.params[Synapsis::steps_for_degradation] = 15;
+  syn_args.params[Synapsis::steps_remaining] = 15;
+  syn_args.params[Synapsis::previous_vpre] = -999999;
 
   // Initialize neuron models
   HH h1(args), h2(args);

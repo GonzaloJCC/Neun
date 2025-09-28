@@ -152,11 +152,11 @@ class SimpleSynapsisPlasticity
 
     /* Degradation calculation begin*/
     if (vpre >= System::m_parameters[System::Vfast]) { 
-    /* Synapsis is active*/
-    System::m_parameters[System::steps_remaining] = System::m_parameters[System::steps_for_degradation];
+      /* Synapsis is active*/
+      System::m_parameters[System::steps_remaining] = System::m_parameters[System::steps_for_degradation];
     
-      if (System::m_parameters[System::previous_vpre] < System::m_parameters[System::Vfast]) {
-          System::m_parameters[System::gfast] += 0.1; // LTP (Long-term Potentiation)
+      if (System::m_parameters[System::previous_vpre] != -999999 && System::m_parameters[System::previous_vpre] < System::m_parameters[System::Vfast]) {
+          System::m_parameters[System::gfast] += 0.20; // LTP (Long-term Potentiation)
           if (System::m_parameters[System::gfast] > 1) {
               System::m_parameters[System::gfast] = 1; // max gfast
           }
@@ -164,7 +164,8 @@ class SimpleSynapsisPlasticity
     } else { 
       /*Synapsis is not active*/
       if (System::m_parameters[System::steps_remaining] == 0) {
-          System::m_parameters[System::gfast] -= 0.1; // LTD (Long-term Depression)
+          System::m_parameters[System::steps_remaining] = System::m_parameters[System::steps_for_degradation];
+          System::m_parameters[System::gfast] -= 0.005; // LTD (Long-term Depression)
           if (System::m_parameters[System::gfast] < 0) {
               System::m_parameters[System::gfast] = 0; // min gfast
           }

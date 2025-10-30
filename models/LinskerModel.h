@@ -23,25 +23,30 @@ class LinskerModel {
     };
 
     enum parameter {
-      v_pre,    // Presynaptic neuron's voltage
-      v_post,   // Postsynaptic neuron's voltage
+      v_pre,    // Presynaptic neuron's voltage (membrane potential)
+      v_post,   // Postsynaptic neuron's voltage (membrane potential)
       xo,       // Constant for presynaptic neuron
       yo,       // Constant for postsynaptic neuron
       eta,      // Learning rate
       ki,       // Constant
-      w_min,    // Minimum allowed synaptic weight
-      w_max,    // Maximum allowed synaptic weight
-      i,        // Synaptic intensity neuron
+      w_max,    // Maximum allowed synaptic weight (w_min = -wmax)
+      i,        // Synaptic intensity
       n_parameters
     };
 
     typedef precission precission_t;
 
  public:
+    // in constructor create mediator
     LinskerModel() {}
 
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
+        // update weight
+
+        // call mediator
+
+        // update weight
         ;
     }
 };

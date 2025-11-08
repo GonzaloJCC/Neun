@@ -6,6 +6,8 @@
 #ifndef LINSKER_MODEL_H_
 #define LINSKER_MODEL_H_
 
+#include "SynapseWeightNormalizer.h"
+
 /**
  * @brief Implements a synapsis based on (Linsker 1986)
  */
@@ -28,7 +30,7 @@ class LinskerModel {
       xo,       // Constant for presynaptic neuron
       yo,       // Constant for postsynaptic neuron
       eta,      // Learning rate
-      ki,       // Constant
+      k1,       // Constant
       w_max,    // Maximum allowed synaptic weight (w_min = -wmax)
       i,        // Synaptic intensity
       n_parameters
@@ -43,6 +45,7 @@ class LinskerModel {
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
         // update weight
+        incr[w] = eta * ((v_pre - xo) * (v_post - yo) + k1)
 
         // call mediator
 

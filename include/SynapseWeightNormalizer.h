@@ -2,8 +2,8 @@
 
 *************************************************************/
 
-#ifndef SYNAPSEWEIGHTNORMALIZER
-#define SYNAPSEWEIGHTNORMALIZER
+#ifndef SYNAPSEWEIGHTNORMALIZER_H_
+#define SYNAPSEWEIGHTNORMALIZER_H_
 
 #include <algorithm>
 #include <vector>
@@ -18,6 +18,8 @@ template <typename Neuron, typename Synapse> // Neuron's type, synapse's type
 class SynapseWeightNormalizer {
 
  public:
+
+  using precission = typename Synapse::precission_t;
   static SynapseWeightNormalizer& get_instance() {
     static SynapseWeightNormalizer instance;
     return instance;
@@ -65,9 +67,9 @@ class SynapseWeightNormalizer {
     std::vector<Synapse*>& synapse_group = map_iterator->second;
     if (synapse_group.empty()) return;
 
-    const double w_max = updated_synapse->get_w_max();
-    const double w_min = -w_max;
-    double current_weight = updated_synapse->get_weight();
+    const precission w_max = updated_synapse->get_w_max();
+    const precission w_min = -w_max;
+    precission current_weight = updated_synapse->get_weight();
 
     if (current_weight > w_max) {
         current_weight = w_max;
@@ -100,4 +102,4 @@ class SynapseWeightNormalizer {
 
 };
 
-#endif SYNAPSEWEIGHTNORMALIZER
+#endif /*SYNAPSEWEIGHTNORMALIZER_H_*/

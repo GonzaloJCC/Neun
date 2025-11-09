@@ -12,7 +12,7 @@
  * @brief Implements a synapsis based on (Linsker 1986)
  */
 template <typename precission = double>
-class LinskerModel {
+class LinskerSynapsisModel {
 #ifndef __AVR_ARCH__
   static_assert(std::is_floating_point<precission>::value);
 #endif  //__AVR_ARCH__
@@ -40,27 +40,14 @@ class LinskerModel {
 
  public:
     // in constructor create mediator
-    LinskerModel() {}
+    LinskerSynapsisModel() {}
 
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
         // update weight
-        incr[w] = eta * ((v_pre - xo) * (v_post - yo) + k1)
-
-        // call mediator
-
-        // update weight
-        ;
+        incs[w] = eta * ((v_pre - xo) * (v_post - yo) + k1);
     }
 };
-
-
-
-
-
-
-
-
 
 
 

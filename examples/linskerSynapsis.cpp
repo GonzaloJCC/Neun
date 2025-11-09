@@ -12,8 +12,8 @@
 
 typedef RungeKutta4 Integrator;
 typedef DifferentialNeuronWrapper<SystemWrapper<HodgkinHuxleyModel<double>>, Integrator> HH;
-typedef Linsker<HH, HH, Integrator, double> Synapsis;
-// typedef LinskerModel<double> SynapsisModel;
+typedef LinskerSynapsis<HH, HH, Integrator, double> Synapsis;
+// typedef LinskerSynapsisModel<double> SynapsisModel;
 
 int main(int argc, char **argv) {
   // Struct to initialize neuron model parameters

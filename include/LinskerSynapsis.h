@@ -13,7 +13,7 @@
 #include "NeuronConcept.h"
 #endif  //__AVR_ARCH__
 
-#include "SynapseWeightNormalizator.h"
+#include "SynapseWeightNormalizer.h"
 #include "IntegratedSystemWrapper.h"
 #include "LinskerSynapsisModel.h"
 #include "SerializableWrapper.h"
@@ -24,7 +24,7 @@
  * Implements a synapse based on (Linsker, 1986)
  */
 
-template <typename TNode1, typename TNode2, typename precission = double>
+template <typename TNode1, typename TNode2, typename TIntegrator, typename precission = double>
 requires NeuronConcept<TNode1> && NeuronConcept<TNode2> &&
     IntegratorConcept<TIntegrator, SerializableWrapper<
           SystemWrapper<LinskerSynapsisModel<precission> > > >
@@ -122,7 +122,7 @@ class LinskerSynapsis
       TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
     }
     Normalizer::get_instance().normalize_weights(this, &m_n2);
-    
+
     
   }
 

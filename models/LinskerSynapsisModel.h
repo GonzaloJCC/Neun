@@ -52,4 +52,4 @@ class LinskerSynapsisModel {
 
 
 
-#endif LINSKER_MODEL_H_
+#endif /*LINSKER_MODEL_H_*/

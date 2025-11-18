@@ -138,6 +138,8 @@ class ChemicalSynapsis
         m_n2_variable(synapse.m_n2_variable),
         m_steps(synapse.m_steps),
         System(synapse) {}
+  
+  // TODO include a constructor without neurons for precission voltage input only
 
   void step(precission h) {
     //Vpre parameter updated from Presynaptic neuron value (must be defined in synapsisModel params)
@@ -156,8 +158,26 @@ class ChemicalSynapsis
     System::m_parameters[System::islow] = System::m_parameters[System::gslow] * System::m_variables[System::mslow] * (v_post - System::m_parameters[System::Esyn]);
     
     System::m_parameters[System::i] = System::m_parameters[System::ifast]+System::m_parameters[System::islow];
+  }
 
-    return System::m_parameters[System::i] ;
+  void step(precission h, precission vpre, precission vpost) {
+    //Vpre parameter updated from Presynaptic neuron value (must be defined in synapsisModel params)
+    
+    System::m_parameters[System::v_pre]= vpre;
+    precission v_post = vpost;
+
+    for (int i = 0; i < m_steps; ++i) {
+      TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
+    }
+
+    /* (Golowasch, 1999) */
+    System::m_parameters[System::ifast] = (System::m_parameters[System::gfast] * (v_post - System::m_parameters[System::Esyn])) /
+                                          (1 + exp(System::m_parameters[System::sfast] * (System::m_parameters[System::Vfast] - System::m_parameters[System::v_pre])));
+
+
+    System::m_parameters[System::islow] = System::m_parameters[System::gslow] * System::m_variables[System::mslow] * (v_post - System::m_parameters[System::Esyn]);
+    
+    System::m_parameters[System::i] = System::m_parameters[System::ifast]+System::m_parameters[System::islow];
   }
 };
 

@@ -60,13 +60,12 @@ class SynapseWeightNormalizer {
    */
   void normalize_weights(Synapse* updated_synapse, Neuron* post_synaptic_neuron) {
         
-    // Get the synapses to normalize
+    // 1. Obtener el grupo
     auto map_iterator = neuron_synapses_map.find(post_synaptic_neuron);
     if (map_iterator == neuron_synapses_map.end()) return;
 
     std::vector<Synapse*>& synapse_group = map_iterator->second;
     if (synapse_group.empty()) return;
-
     const precission w_max = updated_synapse->get_w_max();
     const precission w_min = -w_max;
     precission current_weight = updated_synapse->get_weight();
@@ -77,18 +76,41 @@ class SynapseWeightNormalizer {
         current_weight = w_min;
     }
     updated_synapse->set_weight(current_weight);
+    
+    // If only 1 synapse just return
+    if (synapse_group.size() <= 1) {
+        return; 
+    }
 
-    // Normalize the other synapses in the group
+    //NORMALIZE:
     
-    const double abs_w_max = std::abs(w_max);
-    
-    // Avoid division by zero
-    if (abs_w_max < 1e-9) return;
- 
-    // Normalize the group
+    // 1. Calcular la suma actual de pesos
+    precission current_sum = 0;
     for (Synapse* s : synapse_group) {
-        // w := w / |w_max|
-        s->set_weight( s->get_weight() / abs_w_max );
+        current_sum += s->get_weight();
+    }
+
+    // Right now target sum = N * (w_max / 2)
+    precission target_sum = synapse_group.size() * (w_max / 2.0); 
+
+    precission delta = current_sum - target_sum;
+    precission adjustment = -delta / (synapse_group.size() - 1);
+
+    // Adjust all synapses (except the one we updated earlier)
+    for (Synapse* s : synapse_group) {
+        if (s == updated_synapse) continue;
+
+        precission new_w = s->get_weight() + adjustment;
+        
+        // Limit them [-w_max, w_max]
+        if (new_w > w_max) {
+          new_w = w_max;
+        }
+        else if (new_w < w_min) {
+          new_w = w_min;
+        }
+        
+        s->set_weight(new_w);
     }
   }
 

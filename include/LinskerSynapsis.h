@@ -73,6 +73,7 @@ class LinskerSynapsis
           for(int i = 0; i < System::n_variables; i++) {
             System::m_variables[i] = 0;
           }
+          Normalizer::get_instance().add_synapse(this, &m_n2);
         }
 
 
@@ -88,6 +89,7 @@ class LinskerSynapsis
           for(int i = 0; i < System::n_variables; i++) {
             System::m_variables[i] = 0;
           }
+          Normalizer::get_instance().add_synapse(this, &m_n2);
         }
 
   LinskerSynapsis (TNode1 const &n1, TNode2 &n2,
@@ -97,8 +99,12 @@ class LinskerSynapsis
         m_n1_variable(synapse.m_n1_variable),
         m_n2_variable(synapse.m_n2_variable),
         m_steps(synapse.m_steps),
-        System(synapse) {}
-
+        System(synapse) {
+          Normalizer::get_instance().add_synapse(this, &m_n2);
+        }
+  ~LinskerSynapsis() {
+      Normalizer::get_instance().remove_synapse(this, &m_n2);
+  }
 
   void step(precission h) {
 

@@ -70,35 +70,26 @@ class SynapseWeightNormalizer {
     const precission w_min = -w_max;
     precission range = w_max - w_min;
 
-    // Find the real range
-    precission current_max = synapse_group[0]->get_weight();
-    precission current_min = synapse_group[0]->get_weight();
-
-    for(Synapse* s : synapse_group) {
-      precission w = s-> get_weight();
-      if (w < current_min) current_min = w;
-      if (w > current_max) current_max = w;
-    }
-    range = current_max - current_min;
-
-    if (std::abs(range) < 1e-9) {
-      for(Synapse* s : synapse_group) {
-            precission w = s->get_weight();
-            if (w > w_max) s->set_weight(w_max);
-            else if (w < -w_max) s->set_weight(-w_max);
-      }
-      return;
-    }
-
-    // For all synapsis (except updated_synapse) do the normalization
+    // Subtract the mean to keep sum constant
+    precission sum = 0;
     for (Synapse* s : synapse_group) {
+        sum += s->get_weight();
+    }
+    
+    precission mean = sum / synapse_group.size();
 
+    if (std::abs(mean) > 1e-15) {
+        for (Synapse* s : synapse_group) {
+            precission w = s->get_weight();
+            s->set_weight(w - mean);
+        }
+    }
+
+    // Values must stay in range [-w_max, w_max]
+    for (Synapse* s : synapse_group) {
         precission w = s->get_weight();
-        
-        // w = (w - w.min()) / (w.max() - w.min()) * 2 * wmax - wmax 
-        precission new_w = (w - current_min) / (range) * 2 * w_max - w_max;
-        
-        s->set_weight(new_w);
+        if (w > w_max) s->set_weight(w_max);
+        else if (w < -w_max) s->set_weight(-w_max);
     }
   }
  private:

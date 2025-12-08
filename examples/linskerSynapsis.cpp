@@ -9,6 +9,7 @@
 #include <SystemWrapper.h>
 #include <RungeKutta4.h>
 #include <iostream>
+#include <cstdlib>
 
 typedef RungeKutta4 Integrator;
 typedef DifferentialNeuronWrapper<SystemWrapper<HodgkinHuxleyModel<double>>, Integrator> HH;
@@ -30,11 +31,11 @@ int main(int argc, char **argv) {
 
 
   Synapsis::ConstructorArgs syn_args;
-  syn_args.params[Synapsis::xo] = -90;
-  syn_args.params[Synapsis::yo] = -50;
-  syn_args.params[Synapsis::eta] = 0.00025;
-  syn_args.params[Synapsis::k1] = 50;
-  syn_args.params[Synapsis::w_max] = 5;
+  syn_args.params[Synapsis::xo] = -65;
+  syn_args.params[Synapsis::yo] = -65;
+  syn_args.params[Synapsis::eta] = 0.00001;
+  syn_args.params[Synapsis::k1] = -500;
+  syn_args.params[Synapsis::w_max] = 3;
 
 
   // Initialize neuron models
@@ -52,12 +53,15 @@ int main(int argc, char **argv) {
   Synapsis s1(h1, HH::v, h2, HH::v, syn_args, 1);
   Synapsis s2(h3, HH::v, h2, HH::v, syn_args, 1);
 
+  // Initialize weights with random values (to break symmetry)
+  s1.set_weight(0.001 * (rand() / (double)RAND_MAX));
+  s2.set_weight(-0.001 * (rand() / (double)RAND_MAX));
 
   // Perform the simulation
   double simulation_time = 10000;
   // std::cout << "Time vpre vpost i w" << std::endl;
   std::cout << "Time" << " " << "V1pre" << " " << "V2pre" << " " << "Vpost" 
-              << " " << "i1" << " " << "i2" << "w1" << " " << "w2" << " " << "SUM(W)" << std::endl;
+              << " " << "i1" << " " << "i2" << " " << "w1" << " " << "w2" << " " << "SUM(W)" << std::endl;
 
   for (double time = 0; time < simulation_time; time += step) {
     s1.step(step, h1.get(HH::v), h2.get(HH::v));

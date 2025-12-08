@@ -45,7 +45,7 @@ class LinskerSynapsisModel {
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
         // update weight
-        incs[w] = eta * ((v_pre - xo) * (v_post - yo) + k1);
+        incs[w] = params[eta] * ((params[v_pre] - params[xo]) * (params[v_post] - params[yo]) + params[k1]);
     }
 };
 

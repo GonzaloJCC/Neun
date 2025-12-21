@@ -38,6 +38,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <type_traits>
 #endif  //__AVR_ARCH__
 #include<cmath>
+#include<vector> //new for g++ 13.3.03
+#include<string> //new for g++ 13.3.03
 
 /**
  * @brief Implements a synapsis based on  (Golowasch et al., 1999 )

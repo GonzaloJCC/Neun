@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 
   // Set initial value of V in neuron n1
   h1.set(HH::v, -75);
-  h3.set(HH::v, -72);
+  h3.set(HH::v, -71);
 
   // Set the integration step
   const double step = 0.005;

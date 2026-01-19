@@ -18,7 +18,6 @@ class LinskerSynapsisModel {
 #endif  //__AVR_ARCH__
 
  public:
-    // static vector<precission> all_sinapsis_i; // Possible variable for normalization
     enum variable {
       w,        // Synaptic efficacy
       n_variables
@@ -39,17 +38,12 @@ class LinskerSynapsisModel {
     typedef precission precission_t;
 
  public:
-    // in constructor create mediator
     LinskerSynapsisModel() {}
 
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
-        // update weight
         incs[w] = params[eta] * ((params[v_pre] - params[xo]) * (params[v_post] - params[yo]) + params[k1]);
     }
 };
-
-
-
 
 #endif /*LINSKER_MODEL_H_*/

@@ -5,6 +5,8 @@
 #ifndef SYNAPSEWEIGHTNORMALIZER_H_
 #define SYNAPSEWEIGHTNORMALIZER_H_
 
+#include "NormalizableSynapseConcept.h"
+#include "NeuronConcept.h"
 #include <algorithm>
 #include <vector>
 #include <cmath>
@@ -15,6 +17,7 @@
  * @brief Implements a Singleton Mediator to normalize synapse weights
  */
 template <typename Neuron, typename Synapse> // Neuron's type, synapse's type
+requires NeuronConcept<Neuron>
 class SynapseWeightNormalizer {
 
  public:
@@ -60,6 +63,7 @@ class SynapseWeightNormalizer {
    */
   void normalize_weights(Synapse* updated_synapse, Neuron* post_synaptic_neuron) {
         
+   static_assert(NormalizableSynapseConcept<Synapse>);
     auto map_iterator = neuron_synapses_map.find(post_synaptic_neuron);
     if (map_iterator == neuron_synapses_map.end()) return;
 

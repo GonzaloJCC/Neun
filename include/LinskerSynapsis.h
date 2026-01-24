@@ -13,6 +13,7 @@
 #include "NeuronConcept.h"
 #endif  //__AVR_ARCH__
 
+#include "NormalizableSynapseConcept.h"
 #include "SynapseWeightNormalizer.h"
 #include "IntegratedSystemWrapper.h"
 #include "LinskerSynapsisModel.h"
@@ -151,6 +152,8 @@ class LinskerSynapsis
   
  private:
 
+ static_assert(NormalizableSynapseConcept<LinskerSynapsis<TNode1, TNode2, TIntegrator, precission>>);
 };
+
 
 #endif /*LINSKERSYNAPSIS_H_*/

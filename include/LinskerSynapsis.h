@@ -22,8 +22,8 @@
 #include <cmath>
 
 /**
- * Implements a synapse based on (Linsker, 1986)
- */
+* Implements a synapse based on (Linsker, 1986)
+*/
 
 template <typename TNode1, typename TNode2, typename TIntegrator, typename precission = double>
 requires NeuronConcept<TNode1> && NeuronConcept<TNode2> &&
@@ -103,6 +103,7 @@ class LinskerSynapsis
         System(synapse) {
           Normalizer::get_instance().add_synapse(this, &m_n2);
         }
+
   ~LinskerSynapsis() {
       Normalizer::get_instance().remove_synapse(this, &m_n2);
   }

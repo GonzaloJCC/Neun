@@ -133,8 +133,10 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
   }
 
   void step(precission h, precission vpre, precission vpost) {
-    System::m_parameters[System::v_pre] = vpre;
-    System::m_parameters[System::v_post] = vpost;
+    precission v_pre = m_n1.get(m_n1_variable);
+    System::m_parameters[System::v_pre] = v_pre;
+    precission v_post = m_n2.get(m_n2_variable);
+    System::m_parameters[System::v_post] = v_post;
 
     System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
 
@@ -177,6 +179,6 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     }
 
   }
-
+};
 
 #endif /*SONGMILLERABBOTTSYNAPSE_H_*/

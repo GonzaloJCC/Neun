@@ -3,14 +3,14 @@
 
 *************************************************************/
 
-#ifndef SONGMILLERABBOTTMODEL_H_
-#define SONGMILLERABBOTTMODEL_H_
+#ifndef SONGMILLERABBOTTSYNAPSEMODEL_H_
+#define SONGMILLERABBOTTSYNAPSEMODEL_H_
 
 /**
 * @brief Implements a synapse based on (Song, Miller & Abbott, 2000)
 */
 template <typename precission = double>
-class SongMillerAbbottModel {
+class SongMillerAbbottSynapseModel {
 #ifndef __AVR_ARCH__
   static_assert(std::is_floating_point<precission>::value);
 #endif  //__AVR_ARCH__
@@ -39,7 +39,7 @@ class SongMillerAbbottModel {
     typedef precission precission_t;
 
   public:
-    SongMillerAbbottModel() {}
+    SongMillerAbbottSynapseModel() {}
 
     /* Decrement the time left until the synapse forgets the presynaptic or postsynaptic spike*/
     void eval(const precission* const vars, const precission* const params,
@@ -56,4 +56,4 @@ class SongMillerAbbottModel {
   
 };
 
-#endif /*SONGMILLERABBOTTMODEL_H_*/
+#endif /*SONGMILLERABBOTTSYNAPSEMODEL_H_*/

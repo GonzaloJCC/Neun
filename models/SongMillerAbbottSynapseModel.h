@@ -17,7 +17,9 @@ class SongMillerAbbottModel {
 
   public:
     enum variable {
-      g,            // Synaptic conductance (w)
+      g,              // Synaptic conductance (w)
+      time_left_pre,  // Time left until synapse forgets presynaptic spike
+      time_left_post, // Time left until synapse forgets postsynaptic spike
       n_variables
     };
 
@@ -32,6 +34,7 @@ class SongMillerAbbottModel {
       delta_t_minus,// Time difference between presynaptic and postsynaptic spikes for decrease in synaptic weight
       g_max,        // Maximum allowed synaptic conductance
       i,            // Synaptic intensity
+      spike_threshold,
       n_parameters
     };
     
@@ -40,15 +43,17 @@ class SongMillerAbbottModel {
   public:
     SongMillerAbbottModel() {}
 
+    /* Decrement the time left until the synapse forgets the presynaptic or postsynaptic spike*/
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
-        // (if delta_t > 0) {
-        //   incs[g] = ...
-        // } else if (delta_t < 0) {
-        //   incs[g] = ...
-        // } else {
-        //   incs[g] = 0;
-        // }
+
+      if (vars[time_left_pre] > 0) incs[time_left_pre] = -1;
+      else incs[time_left_pre] = 0;
+
+      if (vars[time_left_post] > 0) incs[time_left_post] = -1;
+      else incs[time_left_post] = 0;
+
+      incs[g] = 0;
     }
   
 };

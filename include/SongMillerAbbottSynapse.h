@@ -91,6 +91,7 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     precission v_post = m_n2.get(m_n2_variable);
     System::m_parameters[System::v_post] = v_post;
     
+    System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
     precission threshold = System::m_parameters[System::spike_threshold];
 
     for (int i = 0; i < m_steps; ++i) {
@@ -135,8 +136,34 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     System::m_parameters[System::v_pre] = vpre;
     System::m_parameters[System::v_post] = vpost;
 
+    System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
+
+    precission threshold = System::m_parameters[System::spike_threshold];
+
     for (int i = 0; i < m_steps; ++i) {
       TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
+    }
+
+    /* LTP */
+    if (v_pre >= threshold && v_pre < threshold) {
+      
+      precission time_left = System::m_variables[System::time_left_pre];
+      if (time_left > 0) {
+        System::m_variables[System::g] += System::m_parameters[System::A_plus] * (time_left / System::m_parameters[System::tau_plus]);
+      }
+
+      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
+    }
+
+    /* LTD */
+    if (v_post >= threshold && v_post < threshold) {
+      
+      precission time_left = System::m_variables[System::time_left_post];
+      if (time_left > 0) {
+        System::m_variables[System::g] += System::m_parameters[System::A_minus] * (time_left / System::m_parameters[System::tau_minus]);
+      }
+
+      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
     }
 
     /* Limit growth */

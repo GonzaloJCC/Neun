@@ -30,8 +30,6 @@ class SongMillerAbbottModel {
       A_plus,       // Amplitude of synaptic modification (for LTP) (sugested 0.005)
       tau_minus,    // Time constant for decrease in synaptic weight (sugested 20ms)
       tau_plus,     // Time constant for increase in synaptic weight (sugested 20ms)
-      delta_t_plus, // Time difference between presynaptic and postsynaptic spikes for increase in synaptic weight
-      delta_t_minus,// Time difference between presynaptic and postsynaptic spikes for decrease in synaptic weight
       g_max,        // Maximum allowed synaptic conductance
       i,            // Synaptic intensity
       spike_threshold,

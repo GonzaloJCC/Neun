@@ -35,7 +35,9 @@ int main(int argc, char **argv) {
   syn_args.params[Synapse::A_plus] = 0.005;
   syn_args.params[Synapse::tau_minus] = 20;
   syn_args.params[Synapse::tau_plus] = 20;
+  syn_args.params[Synapse::spike_threshold] = -54;
   syn_args.params[Synapse::g_max] = 1;
+
 
   // Set the integration step
   const double step = 0.005;

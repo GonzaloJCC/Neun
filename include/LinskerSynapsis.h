@@ -139,11 +139,11 @@ class LinskerSynapsis
   }
 
 
-  precission get_w_max() {
+  precission get_w_max() const {
     return System::m_parameters[System::w_max];
   }
   
-  precission get_weight() {
+  precission get_weight() const {
     return System::m_variables[System::w];
   }
 

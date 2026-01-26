@@ -21,11 +21,13 @@
  *  \li void set_weight(precission_t value)
  */
 template <typename T>
-concept NormalizableSynapseConcept = requires(T s) {
+concept NormalizableSynapseConcept = requires(T s, const T t) {
     typename T::precission_t;
-    { s.get_w_max() } -> std::convertible_to<typename T::precission_t>;
-    { s.get_weight() } -> std::convertible_to<typename T::precission_t>;
+    // { s.get_w_max() } -> std::convertible_to<typename T::precission_t>;
+    // { s.get_weight() } -> std::convertible_to<typename T::precission_t>;
     { s.set_weight(typename T::precission_t{}) } -> std::same_as<void>;
+    { t.get_w_max() } -> std::convertible_to<typename T::precission_t>;
+    { t.get_weight() } -> std::convertible_to<typename T::precission_t>;
 };
 
 #endif /*NORMALIZABLESYNAPSECONCEPT_H_*/

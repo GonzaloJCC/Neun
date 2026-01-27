@@ -13,7 +13,7 @@
  *
  *  A normalizable synapse is a synapse that can be normalized.
  *
- *  A model of this concept must meet the requirements for SynapseConcept plus:
+ *  A model of this concept must meet this requirements:
  *
  *  The following methods
  *  \li precission_t get_w_max() const

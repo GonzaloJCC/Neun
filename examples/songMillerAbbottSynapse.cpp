@@ -56,8 +56,12 @@ int main(int argc, char **argv) {
 
   for (double time = 0; time < simulation_time; time += step) {
     s1.step(step, h1.get(HH::v), h2.get(HH::v));
+
     h1.add_synaptic_input(0.5);
+    h2.add_synaptic_input(0.5);
+
     h2.add_synaptic_input(s1.get(Synapse::i));
+    
     h1.step(step);
     h2.step(step);
     std::cout << time << " " << h1.get(HH::v) << " " << h2.get(HH::v) << " " << s1.get(Synapse::i) << " " << s1.get(Synapse::g) << "\n";

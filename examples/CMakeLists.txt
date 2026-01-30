@@ -13,8 +13,8 @@ target_link_libraries(chemicalSynapsis)
 add_executable(simpleSynapsisPlasticity simpleSynapsisPlasticity.cpp)
 target_link_libraries(simpleSynapsisPlasticity)
 
-add_executable(linskerSynapsis linskerSynapsis.cpp)
-target_link_libraries(linskerSynapsis)
+add_executable(linskerSynapse linskerSynapse.cpp)
+target_link_libraries(linskerSynapse)
 
 add_executable(songMillerAbbottSynapse songMillerAbbottSynapse.cpp)
 target_link_libraries(songMillerAbbottSynapse)

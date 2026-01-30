@@ -4,7 +4,7 @@
 *************************************************************/
 
 #include <DifferentialNeuronWrapper.h>
-#include <LinskerSynapsis.h>
+#include <LinskerSynapse.h>
 #include <HodgkinHuxleyModel.h>
 #include <SystemWrapper.h>
 #include <RungeKutta4.h>
@@ -13,8 +13,8 @@
 
 typedef RungeKutta4 Integrator;
 typedef DifferentialNeuronWrapper<SystemWrapper<HodgkinHuxleyModel<double>>, Integrator> HH;
-typedef LinskerSynapsis<HH, HH, Integrator, double> Synapsis;
-// typedef LinskerSynapsisModel<double> SynapsisModel;
+typedef LinskerSynapse<HH, HH, Integrator, double> Synapsis;
+// typedef LinskerSynapseModel<double> SynapsisModel;
 
 int main(int argc, char **argv) {
   // Struct to initialize neuron model parameters

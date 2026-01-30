@@ -2,8 +2,8 @@
 
 *************************************************************/
 
-#ifndef LINSKERSYNAPSIS_H_
-#define LINSKERSYNAPSIS_H_
+#ifndef LinskerSynapse_H_
+#define LinskerSynapse_H_
 
 #ifndef __AVR_ARCH__
 #include <type_traits>
@@ -16,7 +16,7 @@
 #include "NormalizableSynapseConcept.h"
 #include "SynapseWeightNormalizer.h"
 #include "IntegratedSystemWrapper.h"
-#include "LinskerSynapsisModel.h"
+#include "LinskerSynapseModel.h"
 #include "SerializableWrapper.h"
 #include "SystemWrapper.h"
 #include <cmath>
@@ -28,11 +28,11 @@
 template <typename TNode1, typename TNode2, typename TIntegrator, typename precission = double>
 requires NeuronConcept<TNode1> && NeuronConcept<TNode2> &&
     IntegratorConcept<TIntegrator, SerializableWrapper<
-          SystemWrapper<LinskerSynapsisModel<precission> > > >
+          SystemWrapper<LinskerSynapseModel<precission> > > >
 
-class LinskerSynapsis
+class LinskerSynapse
       : public SerializableWrapper<
-            SystemWrapper<LinskerSynapsisModel<precission> > > {
+            SystemWrapper<LinskerSynapseModel<precission> > > {
  private:
   #ifndef __AVR_ARCH__
     static_assert(std::is_floating_point<precission>::value);
@@ -50,7 +50,7 @@ class LinskerSynapsis
 
 
   typedef SerializableWrapper<
-      SystemWrapper<LinskerSynapsisModel<precission> > > System;
+      SystemWrapper<LinskerSynapseModel<precission> > > System;
 
   const int m_steps;
 
@@ -60,9 +60,9 @@ class LinskerSynapsis
   typedef typename System::variable variable;
   typedef typename System::parameter parameter;
   typedef typename System::ConstructorArgs ConstructorArgs;
-  using Normalizer = SynapseWeightNormalizer<TNode2, LinskerSynapsis<TNode1, TNode2, TIntegrator, precission>>;
+  using Normalizer = SynapseWeightNormalizer<TNode2, LinskerSynapse<TNode1, TNode2, TIntegrator, precission>>;
 
-  LinskerSynapsis (TNode1 const &n1, typename TNode1::variable v1,
+  LinskerSynapse (TNode1 const &n1, typename TNode1::variable v1,
                                               TNode2 &n2, typename TNode2::variable v2, 
                                               ConstructorArgs &args, int steps)
       : m_n1(n1),
@@ -78,7 +78,7 @@ class LinskerSynapsis
         }
 
 
-  LinskerSynapsis (TNode1 const &n1, typename TNode1::variable v1,
+  LinskerSynapse (TNode1 const &n1, typename TNode1::variable v1,
                             TNode2 &n2, typename TNode2::variable v2,
                             ConstructorArgs &&args, int steps)
       : m_n1(n1),
@@ -93,8 +93,8 @@ class LinskerSynapsis
           Normalizer::get_instance().add_synapse(this, &m_n2);
         }
 
-  LinskerSynapsis (TNode1 const &n1, TNode2 &n2,
-                            LinskerSynapsis  const &synapse)
+  LinskerSynapse (TNode1 const &n1, TNode2 &n2,
+                            LinskerSynapse  const &synapse)
       : m_n1(n1),
         m_n2(n2),
         m_n1_variable(synapse.m_n1_variable),
@@ -104,7 +104,7 @@ class LinskerSynapsis
           Normalizer::get_instance().add_synapse(this, &m_n2);
         }
 
-  ~LinskerSynapsis() {
+  ~LinskerSynapse() {
       Normalizer::get_instance().remove_synapse(this, &m_n2);
   }
 
@@ -153,8 +153,8 @@ class LinskerSynapsis
   
  private:
 
- static_assert(NormalizableSynapseConcept<LinskerSynapsis<TNode1, TNode2, TIntegrator, precission>>);
+ static_assert(NormalizableSynapseConcept<LinskerSynapse<TNode1, TNode2, TIntegrator, precission>>);
 };
 
 
-#endif /*LINSKERSYNAPSIS_H_*/
+#endif /*LinskerSynapse_H_*/

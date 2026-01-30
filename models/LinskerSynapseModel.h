@@ -12,7 +12,7 @@
  * @brief Implements a synapsis based on (Linsker 1986)
  */
 template <typename precission = double>
-class LinskerSynapsisModel {
+class LinskerSynapseModel {
 #ifndef __AVR_ARCH__
   static_assert(std::is_floating_point<precission>::value);
 #endif  //__AVR_ARCH__
@@ -38,7 +38,7 @@ class LinskerSynapsisModel {
     typedef precission precission_t;
 
  public:
-    LinskerSynapsisModel() {}
+    LinskerSynapseModel() {}
 
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {

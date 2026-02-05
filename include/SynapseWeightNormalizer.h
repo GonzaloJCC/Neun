@@ -37,6 +37,7 @@ class SynapseWeightNormalizer {
    * @brief Adds a synapse to the map
    */
   void add_synapse(Synapse* synapse, Neuron* post_synaptic_neuron) {
+    static_assert(NormalizableSynapseConcept<Synapse>, "Synapse MUST have w_max param, get_w_max, get_weight and set_weight methods.");
     neuron_synapses_map[post_synaptic_neuron].push_back(synapse);
   }
 
@@ -63,7 +64,7 @@ class SynapseWeightNormalizer {
    */
   void normalize_weights(Synapse* updated_synapse, Neuron* post_synaptic_neuron) {
         
-   static_assert(NormalizableSynapseConcept<Synapse>);
+   static_assert(NormalizableSynapseConcept<Synapse>, "Synapse MUST have w_max param, get_w_max, get_weight and set_weight methods.");
     auto map_iterator = neuron_synapses_map.find(post_synaptic_neuron);
     if (map_iterator == neuron_synapses_map.end()) return;
 

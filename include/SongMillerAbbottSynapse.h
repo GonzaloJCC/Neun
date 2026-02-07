@@ -96,7 +96,6 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     precission v_post = m_n2.get(m_n2_variable);
     System::m_parameters[System::v_post] = v_post;
     
-    System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
     precission threshold = System::m_parameters[System::spike_threshold];
 
     for (int i = 0; i < m_steps; ++i) {
@@ -139,14 +138,14 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     m_last_value_pre = v_pre;
     m_last_value_post = v_post;
 
+    // Calculate synaptic current
+    System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
   }
 
   void step(precission h, precission vpre, precission vpost) {
     
     System::m_parameters[System::v_pre] = vpre;
     System::m_parameters[System::v_post] = vpost;
-
-    System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
 
     precission threshold = System::m_parameters[System::spike_threshold];
 
@@ -190,6 +189,8 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     m_last_value_pre = vpre;
     m_last_value_post = vpost;
 
+    // Calculate synaptic current
+    System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
   }
 };
 

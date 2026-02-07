@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
   syn_args.params[Synapse::tau_plus] = 20;
   syn_args.params[Synapse::spike_threshold] = -54;
   syn_args.params[Synapse::g_max] = 1;
+  syn_args.params[Synapse::E_syn] = 0;
   
   // syn_args.variables[Synapse::g] = 0;
   // syn_args.variables[Synapse::time_left_pre] = 0;
@@ -60,8 +61,8 @@ int main(int argc, char **argv) {
   Synapse s2(h3, HH::v, h2, HH::v, syn_args, 1);
 
   // Initialize g
-  s1.set_g(0.052);
-  s2.set_g(0.05);
+  s1.set_g(0.0052);
+  s2.set_g(0.005);
 
   // s1.set_time_left_pre(20);
   // s1.set_time_left_post(20);

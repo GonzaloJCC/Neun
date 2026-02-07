@@ -90,8 +90,7 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
         }
  private:
   void calculate_i() {
-    precission E_syn = 0;
-    // precission E_syn = -70;
+    precission E_syn = System::m_parameters[System::E_syn];
     precission conductance = 0;
     if (System::m_parameters[System::time_left_pre] > 0) {
       conductance = System::m_variables[System::g];

@@ -32,6 +32,7 @@ class SongMillerAbbottSynapseModel {
       tau_plus,     // Time constant for increase in synaptic weight (sugested 20ms)
       g_max,        // Maximum allowed synaptic conductance
       i,            // Synaptic intensity
+      E_syn,        // Reversal potential
       spike_threshold,
       n_parameters
     };

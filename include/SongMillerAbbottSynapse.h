@@ -88,7 +88,18 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
             System::m_variables[i] = 0;
           }
         }
+ private:
+  void calculate_i() {
+    precission E_syn = 0;
+    // precission E_syn = -70;
+    precission conductance = 0;
+    if (System::m_parameters[System::time_left_pre] > 0) {
+      conductance = System::m_variables[System::g];
+    }
 
+    System::m_parameters[System::i] = conductance * (System::m_parameters[System::v_post] - E_syn);
+  }
+ public:
   void step(precission h) {
     
     precission v_pre = m_n1.get(m_n1_variable);
@@ -139,7 +150,7 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     m_last_value_post = v_post;
 
     // Calculate synaptic current
-    System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
+    calculate_i();
   }
 
   void step(precission h, precission vpre, precission vpost) {
@@ -190,7 +201,19 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     m_last_value_post = vpost;
 
     // Calculate synaptic current
-    System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
+    calculate_i();
+  }
+
+  void set_g(precission g) {
+    System::m_variables[System::g] = g;
+  }
+
+  void set_time_left_pre(precission time_left_pre) {
+    System::m_variables[System::time_left_pre] = time_left_pre;
+  }
+
+  void set_time_left_post(precission time_left_post) {
+    System::m_variables[System::time_left_post] = time_left_post;
   }
 };
 

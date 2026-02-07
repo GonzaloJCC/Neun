@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
   // Struct to initialize synapse model parameters
   Synapse::ConstructorArgs syn_args;
-  syn_args.params[Synapse::A_minus] = 0.02;
+  syn_args.params[Synapse::A_minus] = 0.00525;
   syn_args.params[Synapse::A_plus] = 0.005;
   syn_args.params[Synapse::tau_minus] = 20;
   syn_args.params[Synapse::tau_plus] = 20;

@@ -26,7 +26,7 @@ class SongMillerAbbottSynapseModel {
     enum parameter {
       v_pre,        // Presynaptic neuron's voltage (membrane potential)
       v_post,       // Postsynaptic neuron's voltage (membrane potential)
-      A_minus,      // Amplitude of synaptic modification (for LTD) (sugested 0.02)
+      A_minus,      // Amplitude of synaptic modification (for LTD) (sugested 0.00525) (A- / A+ = 1.05)
       A_plus,       // Amplitude of synaptic modification (for LTP) (sugested 0.005)
       tau_minus,    // Time constant for decrease in synaptic weight (sugested 20ms)
       tau_plus,     // Time constant for increase in synaptic weight (sugested 20ms)

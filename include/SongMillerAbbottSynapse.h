@@ -41,6 +41,7 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
   TNode2 &m_n2;
 
   precission m_last_value_pre;
+  precission m_last_value_post;
 
   const typename TNode1::variable m_n1_variable;
   const typename TNode2::variable m_n2_variable;
@@ -65,6 +66,8 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
         m_n1_variable(v1),
         m_n2_variable(v2),
         System(args),
+        m_last_value_pre(-75),
+        m_last_value_post(-75),
         m_steps(steps) {
           for(int i = 0; i < System::n_variables; i++) {
             System::m_variables[i] = 0;
@@ -78,6 +81,8 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
         m_n1_variable(synapse.m_n1_variable),
         m_n2_variable(synapse.m_n2_variable),
         m_steps(synapse.m_steps),
+        m_last_value_pre(synapse.m_last_value_pre),
+        m_last_value_post(synapse.m_last_value_post),
         System(synapse) {
           for(int i = 0; i < System::n_variables; i++) {
             System::m_variables[i] = 0;
@@ -98,26 +103,26 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
       TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
     }
 
-    /* LTP */
-    if (v_pre >= threshold && v_pre < threshold) {
-      
+    // LTP (if vpost spikes and vpre was active)
+    if (m_last_value_post < threshold && v_post >= threshold) {
       precission time_left = System::m_variables[System::time_left_pre];
       if (time_left > 0) {
-        System::m_variables[System::g] += System::m_parameters[System::A_plus] * (time_left / System::m_parameters[System::tau_plus]);
-      }
+        System::m_variables[System::g] += System::m_parameters[System::g_max] * (System::m_parameters[System::A_plus] * std::exp(time_left / System::m_parameters[System::tau_plus]));
+      } // g := g + g_max * (A+ * exp(△t/ τ+))
 
-      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
+      // Restart time left until forgetting post-synaptic spike
+      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
     }
 
-    /* LTD */
-    if (v_post >= threshold && v_post < threshold) {
-      
+    // LTD (if vpre spikes and vpost was active)
+    if (m_last_value_pre < threshold && v_pre >= threshold) {
       precission time_left = System::m_variables[System::time_left_post];
       if (time_left > 0) {
-        System::m_variables[System::g] += System::m_parameters[System::A_minus] * (time_left / System::m_parameters[System::tau_minus]);
-      }
+        System::m_variables[System::g] -= System::m_parameters[System::g_max] * (System::m_parameters[System::A_minus] * std::exp(time_left / System::m_parameters[System::tau_minus]));
+      } // g := g - g_max * (A- * exp(△t/ τ-))
 
-      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
+      // Restart time left until forgetting pre-synaptic spike
+      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
     }
 
     /* Limit growth */
@@ -130,13 +135,16 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
       System::m_variables[System::g] = 0;
     }
 
+    // Save states
+    m_last_value_pre = v_pre;
+    m_last_value_post = v_post;
+
   }
 
   void step(precission h, precission vpre, precission vpost) {
-    precission v_pre = m_n1.get(m_n1_variable);
-    System::m_parameters[System::v_pre] = v_pre;
-    precission v_post = m_n2.get(m_n2_variable);
-    System::m_parameters[System::v_post] = v_post;
+    
+    System::m_parameters[System::v_pre] = vpre;
+    System::m_parameters[System::v_post] = vpost;
 
     System::m_parameters[System::i] = System::m_variables[System::g] * System::m_parameters[System::v_pre];
 
@@ -146,26 +154,26 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
       TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
     }
 
-    /* LTP */
-    if (v_pre >= threshold && v_pre < threshold) {
-      
+    // LTP (if vpost spikes and vpre was active)
+    if (m_last_value_post < threshold && vpost >= threshold) {
       precission time_left = System::m_variables[System::time_left_pre];
       if (time_left > 0) {
-        System::m_variables[System::g] += System::m_parameters[System::A_plus] * (time_left / System::m_parameters[System::tau_plus]);
-      }
+        System::m_variables[System::g] += System::m_parameters[System::g_max] * (System::m_parameters[System::A_plus] * std::exp(time_left / System::m_parameters[System::tau_plus]));
+      } // g := g + g_max * (A+ * exp(△t/ τ+))
 
-      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
+      // Restart time left until forgetting post-synaptic spike
+      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
     }
 
-    /* LTD */
-    if (v_post >= threshold && v_post < threshold) {
-      
+    // LTD (if vpre spikes and vpost was active)
+    if (m_last_value_pre < threshold && vpre >= threshold) {
       precission time_left = System::m_variables[System::time_left_post];
       if (time_left > 0) {
-        System::m_variables[System::g] += System::m_parameters[System::A_minus] * (time_left / System::m_parameters[System::tau_minus]);
-      }
+        System::m_variables[System::g] -= System::m_parameters[System::g_max] * (System::m_parameters[System::A_minus] * std::exp(time_left / System::m_parameters[System::tau_minus]));
+      } // g := g - g_max * (A- * exp(△t/ τ-))
 
-      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
+      // Restart time left until forgetting pre-synaptic spike
+      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
     }
 
     /* Limit growth */
@@ -177,6 +185,10 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     if (System::m_variables[System::g] < 0) {
       System::m_variables[System::g] = 0;
     }
+
+    // Save states for the next step
+    m_last_value_pre = vpre;
+    m_last_value_post = vpost;
 
   }
 };

@@ -45,13 +45,13 @@ class SongMillerAbbottSynapseModel {
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
 
-      if (vars[time_left_pre] > 0) incs[time_left_pre] = -1;
+      if (vars[time_left_pre] > 0) incs[time_left_pre] = -1; // d(time_left_pre)/dt = -1
       else incs[time_left_pre] = 0;
 
-      if (vars[time_left_post] > 0) incs[time_left_post] = -1;
+      if (vars[time_left_post] > 0) incs[time_left_post] = -1; // d(time_left_post)/dt = -1
       else incs[time_left_post] = 0;
 
-      incs[g] = 0;
+      incs[g] = 0; // d(g)/dt = 0
     }
   
 };

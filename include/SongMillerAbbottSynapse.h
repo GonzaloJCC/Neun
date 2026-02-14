@@ -140,8 +140,8 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     }
 
     /* Limit decay */
-    if (System::m_variables[System::g] < 0) {
-      System::m_variables[System::g] = 0;
+    if (System::m_variables[System::g] < System::m_parameters[System::g_min]) {
+      System::m_variables[System::g] = System::m_parameters[System::g_min];
     }
 
     // Save states
@@ -191,8 +191,8 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     }
 
     /* Limit decay */
-    if (System::m_variables[System::g] < 0) {
-      System::m_variables[System::g] = 0;
+    if (System::m_variables[System::g] < System::m_parameters[System::g_min]) {
+      System::m_variables[System::g] = System::m_parameters[System::g_min];
     }
 
     // Save states for the next step

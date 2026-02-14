@@ -17,7 +17,7 @@ class SongMillerAbbottSynapseModel {
 
   public:
     enum variable {
-      g,              // Synaptic conductance (w)
+      ,              // Synaptic conductance (w)
       time_left_pre,  // Time left until synapse forgets presynaptic spike
       time_left_post, // Time left until synapse forgets postsynaptic spike
       n_variables
@@ -31,8 +31,10 @@ class SongMillerAbbottSynapseModel {
       tau_minus,    // Time constant for decrease in synaptic weight (sugested 20ms)
       tau_plus,     // Time constant for increase in synaptic weight (sugested 20ms)
       g_max,        // Maximum allowed synaptic conductance
+      g_min,        // Minimum allowed synaptic conductance
       i,            // Synaptic intensity
       E_syn,        // Reversal potential
+
       spike_threshold,
       n_parameters
     };

@@ -80,12 +80,12 @@ int main(int argc, char **argv) {
     h1.add_synaptic_input(0.6);
     h3.add_synaptic_input(0.5);
 
-    if (slower == 50) {
-      slower = 0;
-    } else {
-      h3.add_synaptic_input(0.5);
-      slower++;
-    }
+    // if (slower == 50) {
+    //   slower = 0;
+    // } else {
+    //   h3.add_synaptic_input(0.5);
+    //   slower++;
+    // }
     
 
     h2.add_synaptic_input(0.5);

@@ -37,18 +37,12 @@ int main(int argc, char **argv) {
   syn_args.params[Synapsis::k1] = -500;
   syn_args.params[Synapsis::w_max] = 3;
 
-  // Synapsis::ConstructorArgs syn_args;
-  // syn_args.params[Synapsis::xo] = -65;
-  // syn_args.params[Synapsis::yo] = -63;
-  // syn_args.params[Synapsis::eta] = 0.00000001;
-  // syn_args.params[Synapsis::k1] = -50;
-  // syn_args.params[Synapsis::w_max] = 2;
 
 
   // Set the integration step
   const double step = 0.005;
-  // double simulation_time = 10000;
-  double simulation_time = 200;
+  double simulation_time = 10000;
+  // double simulation_time = 200;
 
   // 3 Neurons 2 synapses
   {
@@ -75,15 +69,21 @@ int main(int argc, char **argv) {
           s2.step(step, h3.get(HH::v), h2.get(HH::v));
 
           // Inputs
-          h1.add_synaptic_input(0.5);
-          h2.add_synaptic_input(0.5);
-          // h3.add_synaptic_input(0.6);
-          if (slower == 50) {
+          // h1.add_synaptic_input(0.5);
+          if (slower == 25) {
             slower = 0;
           } else {
-            h3.add_synaptic_input(0.5);
+            h1.add_synaptic_input(0.5);
             slower++;
           }
+          h2.add_synaptic_input(0.5);
+          h3.add_synaptic_input(0.6);
+          // if (slower == 50) {
+          //   slower = 0;
+          // } else {
+          //   h3.add_synaptic_input(0.5);
+          //   slower++;
+          // }
     
 
           h2.add_synaptic_input(s1.get(Synapsis::i));

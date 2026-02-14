@@ -21,7 +21,7 @@
 #include "SystemWrapper.h"
 #include <cmath>
 
-#define CURRENT_DIRECTION -1
+#define CURRENT_DIRECTION 1
 
 /**
 * Implements a synapse based on (Linsker, 1986)
@@ -120,7 +120,7 @@ class LinskerSynapse
       TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
     }
     Normalizer::get_instance().normalize_weights(this, &m_n2);
-    System::m_parameters[System::i] = CURRENT_DIRECTION * System::m_variables[System::w] * System::m_parameters[System::v_pre];
+    System::m_parameters[System::i] = CURRENT_DIRECTION * System::m_variables[System::w] * System::m_parameters[System::v_post];
 
   }
 
@@ -134,7 +134,7 @@ class LinskerSynapse
       TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
     }
     Normalizer::get_instance().normalize_weights(this, &m_n2);
-    System::m_parameters[System::i] = CURRENT_DIRECTION * System::m_variables[System::w] * System::m_parameters[System::v_pre];
+    System::m_parameters[System::i] = CURRENT_DIRECTION * System::m_variables[System::w] * System::m_parameters[System::v_post];
 
     
   }

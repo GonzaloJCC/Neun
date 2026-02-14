@@ -84,14 +84,12 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
         }
  private:
   void calculate_i() {
-    precission E_syn = System::m_parameters[System::E_syn];
     precission conductance = 0;
     if (System::m_parameters[System::time_left_pre] > 0) {
       conductance = System::m_variables[System::g];
     }
 
-    System::m_parameters[System::i] = conductance * (System::m_parameters[System::v_post] - E_syn);
-    // System::m_parameters[System::i] = System::m_variables[System::g] * (System::m_parameters[System::v_post] - E_syn);
+    System::m_parameters[System::i] = conductance * System::m_parameters[System::v_post];
   }
 
   void update_g(precission h) {

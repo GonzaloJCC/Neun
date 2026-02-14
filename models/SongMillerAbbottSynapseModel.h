@@ -33,7 +33,6 @@ class SongMillerAbbottSynapseModel {
       g_max,        // Maximum allowed synaptic conductance
       g_min,        // Minimum allowed synaptic conductance
       i,            // Synaptic intensity
-      E_syn,        // Reversal potential
 
       spike_threshold,
       n_parameters

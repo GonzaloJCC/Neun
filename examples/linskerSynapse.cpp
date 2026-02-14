@@ -30,24 +30,25 @@ int main(int argc, char **argv) {
   args.params[HH::gl] = 0.3 * 7.854e-3;
 
 
-  // Synapsis::ConstructorArgs syn_args;
-  // syn_args.params[Synapsis::xo] = -65;
-  // syn_args.params[Synapsis::yo] = -65;
-  // syn_args.params[Synapsis::eta] = 0.00001;
-  // syn_args.params[Synapsis::k1] = -500;
-  // syn_args.params[Synapsis::w_max] = 3;
-
   Synapsis::ConstructorArgs syn_args;
   syn_args.params[Synapsis::xo] = -65;
-  syn_args.params[Synapsis::yo] = -63;
-  syn_args.params[Synapsis::eta] = 0.00000001;
-  syn_args.params[Synapsis::k1] = -50;
-  syn_args.params[Synapsis::w_max] = 2;
+  syn_args.params[Synapsis::yo] = -65;
+  syn_args.params[Synapsis::eta] = 0.00001;
+  syn_args.params[Synapsis::k1] = -500;
+  syn_args.params[Synapsis::w_max] = 3;
+
+  // Synapsis::ConstructorArgs syn_args;
+  // syn_args.params[Synapsis::xo] = -65;
+  // syn_args.params[Synapsis::yo] = -63;
+  // syn_args.params[Synapsis::eta] = 0.00000001;
+  // syn_args.params[Synapsis::k1] = -50;
+  // syn_args.params[Synapsis::w_max] = 2;
 
 
   // Set the integration step
   const double step = 0.005;
-  double simulation_time = 10000;
+  // double simulation_time = 10000;
+  double simulation_time = 200;
 
   // 3 Neurons 2 synapses
   {
@@ -68,7 +69,7 @@ int main(int argc, char **argv) {
       s2.set_weight(0.001 * (rand() / (double)RAND_MAX));
 
       std::cout << "Time v1pre v2pre vpost i1 i2 w1 w2 SUM(W)" << std::endl;
-
+      int slower = 0;
       for (double time = 0; time < simulation_time; time += step) {
           s1.step(step, h1.get(HH::v), h2.get(HH::v));
           s2.step(step, h3.get(HH::v), h2.get(HH::v));
@@ -76,7 +77,14 @@ int main(int argc, char **argv) {
           // Inputs
           h1.add_synaptic_input(0.5);
           h2.add_synaptic_input(0.5);
-          h3.add_synaptic_input(0.6);
+          // h3.add_synaptic_input(0.6);
+          if (slower == 50) {
+            slower = 0;
+          } else {
+            h3.add_synaptic_input(0.5);
+            slower++;
+          }
+    
 
           h2.add_synaptic_input(s1.get(Synapsis::i));
           h2.add_synaptic_input(s2.get(Synapsis::i));

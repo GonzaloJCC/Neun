@@ -18,6 +18,7 @@
 #include "SystemWrapper.h"
 #include <cmath>
 
+#define CURRENT_DIRECTION -1
 
 /**
 * Implements a synapse based on (Song, Miller & Abbott, 2000)
@@ -86,10 +87,9 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
   void calculate_i() {
     precission E_syn = System::m_parameters[System::E_syn];
   
-  // I = g_max * s(t) * (V - E)
-  // g es el peso aprendido por STDP
-  // s es la curva alfa/exponencial del disparo actual
-  System::m_parameters[System::i] = -1 *System::m_variables[System::g] * System::m_variables[System::s] * (System::m_parameters[System::v_post] - E_syn);
+  // Isyn = gsyn * s * (V - Esyn)
+
+  System::m_parameters[System::i] = CURRENT_DIRECTION * System::m_variables[System::g] * System::m_variables[System::s] * (System::m_parameters[System::v_post] - E_syn);
   }
 
   void update_g(precission h) {

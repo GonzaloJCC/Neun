@@ -48,14 +48,15 @@ int main(int argc, char **argv) {
   // Set the integration step
   const double step = 0.005;
   double simulation_time = 10000;
+  // double simulation_time = 200;
 
   // Initialize neuron models
   HH h1(args), h3(args), h2(args);
 
   // Set initial value of V
   h1.set(HH::v, -75);
-  h3.set(HH::v, -75);
-  h2.set(HH::v, -75);
+  h3.set(HH::v, -85);
+  h2.set(HH::v, -70);
   
   // Initialize synapse
   Synapse s1(h1, HH::v, h2, HH::v, syn_args, 1);
@@ -71,13 +72,20 @@ int main(int argc, char **argv) {
   // s2.set_time_left_post(20);
 
   std::cout << "Time vpre1 vpre2 vpost i1 i2 g1 g2 SUM(g)" << std::endl;
-
+  int slower = 0;
   for (double time = 0; time < simulation_time; time += step) {
     s1.step(step, h1.get(HH::v), h2.get(HH::v));
     s2.step(step, h3.get(HH::v), h2.get(HH::v));
 
-    h1.add_synaptic_input(0.5);
-    h3.add_synaptic_input(0.5);
+    h1.add_synaptic_input(0.6);
+
+    if (slower == 10) {
+      slower = 0;
+    } else {
+      h3.add_synaptic_input(0.5);
+      slower++;
+    }
+    
 
     h2.add_synaptic_input(0.5);
     h2.add_synaptic_input(s1.get(Synapse::i));

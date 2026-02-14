@@ -156,4 +156,4 @@ class LinskerSynapse
 };
 
 
-#endif /*LinskerSynapse_H_*/
+#endif /*LINSKER_SYNAPSE_H_*/

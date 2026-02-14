@@ -17,7 +17,7 @@ class SongMillerAbbottSynapseModel {
 
   public:
     enum variable {
-      ,              // Synaptic conductance (w)
+      g,              // Synaptic conductance (w)
       time_left_pre,  // Time left until synapse forgets presynaptic spike
       time_left_post, // Time left until synapse forgets postsynaptic spike
       n_variables

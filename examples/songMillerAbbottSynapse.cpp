@@ -38,6 +38,9 @@ int main(int argc, char **argv) {
   syn_args.params[Synapse::spike_threshold] = -54;
   syn_args.params[Synapse::g_max] = 1;
   syn_args.params[Synapse::g_min] = 0;
+  syn_args.params[Synapse::E_syn] = 0;
+  syn_args.params[Synapse::tau_syn] = 5;
+
 
 
   // Set the integration step

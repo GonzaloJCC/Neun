@@ -20,6 +20,7 @@ class SongMillerAbbottSynapseModel {
       g,              // Synaptic conductance (w)
       time_left_pre,  // Time left until synapse forgets presynaptic spike
       time_left_post, // Time left until synapse forgets postsynaptic spike
+      s,              // Synaptic gating variable
       n_variables
     };
 
@@ -33,7 +34,8 @@ class SongMillerAbbottSynapseModel {
       g_max,        // Maximum allowed synaptic conductance
       g_min,        // Minimum allowed synaptic conductance
       i,            // Synaptic intensity
-
+      E_syn,        // Reversal potential
+      tau_syn,      // Time constant
       spike_threshold,
       n_parameters
     };
@@ -54,6 +56,9 @@ class SongMillerAbbottSynapseModel {
       else incs[time_left_post] = 0;
 
       incs[g] = 0; // d(g)/dt = 0
+
+      incs[s] = -vars[s] / params[tau_syn]; // d(s)/dt = -s/tau_syn
+      if(vars[s] < 0) incs[s] = 0;
     }
   
 };

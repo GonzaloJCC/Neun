@@ -84,12 +84,12 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
         }
  private:
   void calculate_i() {
-    precission conductance = 0;
-    if (System::m_parameters[System::time_left_pre] > 0) {
-      conductance = System::m_variables[System::g];
-    }
-
-    System::m_parameters[System::i] = conductance * System::m_parameters[System::v_post];
+    precission E_syn = System::m_parameters[System::E_syn];
+  
+  // I = g_max * s(t) * (V - E)
+  // g es el peso aprendido por STDP
+  // s es la curva alfa/exponencial del disparo actual
+  System::m_parameters[System::i] = -1 *System::m_variables[System::g] * System::m_variables[System::s] * (System::m_parameters[System::v_post] - E_syn);
   }
 
   void update_g(precission h) {
@@ -102,6 +102,7 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     if (System::m_parameters[System::v_pre] >= threshold && System::m_variables[System::time_left_pre] <= 0) {
       System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
       activation_flag = 1;
+      System::m_variables[System::s] = 1.0; // Update s if vpre spikes
     }
 
     // For vpost

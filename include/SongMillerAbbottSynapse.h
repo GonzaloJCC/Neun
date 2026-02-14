@@ -40,8 +40,6 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
   TNode1 const &m_n1;
   TNode2 &m_n2;
 
-  precission m_last_value_pre;
-  precission m_last_value_post;
 
   const typename TNode1::variable m_n1_variable;
   const typename TNode2::variable m_n2_variable;
@@ -66,8 +64,6 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
         m_n1_variable(v1),
         m_n2_variable(v2),
         System(args),
-        m_last_value_pre(-75),
-        m_last_value_post(-75),
         m_steps(steps) {
           for(int i = 0; i < System::n_variables; i++) {
             System::m_variables[i] = 0;
@@ -81,8 +77,6 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
         m_n1_variable(synapse.m_n1_variable),
         m_n2_variable(synapse.m_n2_variable),
         m_steps(synapse.m_steps),
-        m_last_value_pre(synapse.m_last_value_pre),
-        m_last_value_post(synapse.m_last_value_post),
         System(synapse) {
           for(int i = 0; i < System::n_variables; i++) {
             System::m_variables[i] = 0;
@@ -97,7 +91,59 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     }
 
     System::m_parameters[System::i] = conductance * (System::m_parameters[System::v_post] - E_syn);
+    // System::m_parameters[System::i] = System::m_variables[System::g] * (System::m_parameters[System::v_post] - E_syn);
   }
+
+  void update_g(precission h) {
+
+    precission threshold = System::m_parameters[System::spike_threshold];
+    int activation_flag = 0; // Flag to update g only if the spike has just occurred
+    // Detect spikes // ----------------------------------------------------------------------------------
+     
+    // For vpre
+    if (System::m_parameters[System::v_pre] >= threshold && System::m_variables[System::time_left_pre] <= 0) {
+      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
+      activation_flag = 1;
+    }
+
+    // For vpost
+    if (System::m_parameters[System::v_post] >= threshold && System::m_variables[System::time_left_post] <= 0) {
+      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
+      activation_flag = 1;
+    }
+    // ---------------------------------------------------------------------------------------------------
+
+    precission delta_t = 0;
+    precission f_delta_t = 0;
+    // When both neurons spiked
+    if (activation_flag && System::m_variables[System::time_left_post] > 0 && System::m_variables[System::time_left_pre] > 0) {
+      delta_t = System::m_variables[System::time_left_pre] - System::m_variables[System::time_left_post];
+      // △t = t_pre - t_post
+    }
+
+    // LTP {F(△t) = (A+ * exp(△t/ τ+)) if △t < 0}
+    if (delta_t < 0) {
+      f_delta_t = (System::m_parameters[System::A_plus] * std::exp(delta_t / System::m_parameters[System::tau_plus]));
+    }
+
+    // LTD {F(△t) = (-A- * exp(-△t/ τ-)) if △t > 0}
+    if (delta_t > 0) {
+      f_delta_t = (-System::m_parameters[System::A_minus] * std::exp(-delta_t / System::m_parameters[System::tau_minus]));
+    }
+
+    System::m_variables[System::g] += f_delta_t; // g := g + F(△t)
+
+    /* Limit growth */
+    if (System::m_variables[System::g] > System::m_parameters[System::g_max]) {
+      System::m_variables[System::g] = System::m_parameters[System::g_max];
+    }
+
+    /* Limit decay */
+    if (System::m_variables[System::g] < System::m_parameters[System::g_min]) {
+      System::m_variables[System::g] = System::m_parameters[System::g_min];
+    }
+  }
+
  public:
   void step(precission h) {
     
@@ -105,51 +151,16 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     System::m_parameters[System::v_pre] = v_pre;
     precission v_post = m_n2.get(m_n2_variable);
     System::m_parameters[System::v_post] = v_post;
-    
-    precission threshold = System::m_parameters[System::spike_threshold];
 
     for (int i = 0; i < m_steps; ++i) {
       TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
     }
 
-    // LTP (if vpost spikes and vpre was active)
-    if (m_last_value_post < threshold && v_post >= threshold) {
-      precission time_left = System::m_variables[System::time_left_pre];
-      if (time_left > 0) {
-        System::m_variables[System::g] += System::m_parameters[System::g_max] * (System::m_parameters[System::A_plus] * std::exp(time_left / System::m_parameters[System::tau_plus]));
-      } // g := g + g_max * (A+ * exp(△t/ τ+))
-
-      // Restart time left until forgetting post-synaptic spike
-      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
-    }
-
-    // LTD (if vpre spikes and vpost was active)
-    if (m_last_value_pre < threshold && v_pre >= threshold) {
-      precission time_left = System::m_variables[System::time_left_post];
-      if (time_left > 0) {
-        System::m_variables[System::g] -= System::m_parameters[System::g_max] * (System::m_parameters[System::A_minus] * std::exp(time_left / System::m_parameters[System::tau_minus]));
-      } // g := g - g_max * (A- * exp(△t/ τ-))
-
-      // Restart time left until forgetting pre-synaptic spike
-      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
-    }
-
-    /* Limit growth */
-    if (System::m_variables[System::g] > System::m_parameters[System::g_max]) {
-      System::m_variables[System::g] = System::m_parameters[System::g_max];
-    }
-
-    /* Limit decay */
-    if (System::m_variables[System::g] < System::m_parameters[System::g_min]) {
-      System::m_variables[System::g] = System::m_parameters[System::g_min];
-    }
-
-    // Save states
-    m_last_value_pre = v_pre;
-    m_last_value_post = v_post;
+    update_g(h);
 
     // Calculate synaptic current
     calculate_i();
+
   }
 
   void step(precission h, precission vpre, precission vpost) {
@@ -157,47 +168,11 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
     System::m_parameters[System::v_pre] = vpre;
     System::m_parameters[System::v_post] = vpost;
 
-    precission threshold = System::m_parameters[System::spike_threshold];
-
     for (int i = 0; i < m_steps; ++i) {
       TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
     }
 
-    // LTP (if vpost spikes and vpre was active)
-    if (m_last_value_post < threshold && vpost >= threshold) {
-      precission time_left = System::m_variables[System::time_left_pre];
-      if (time_left > 0) {
-        System::m_variables[System::g] += System::m_parameters[System::g_max] * (System::m_parameters[System::A_plus] * std::exp(time_left / System::m_parameters[System::tau_plus]));
-      } // g := g + g_max * (A+ * exp(△t/ τ+))
-
-      // Restart time left until forgetting post-synaptic spike
-      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
-    }
-
-    // LTD (if vpre spikes and vpost was active)
-    if (m_last_value_pre < threshold && vpre >= threshold) {
-      precission time_left = System::m_variables[System::time_left_post];
-      if (time_left > 0) {
-        System::m_variables[System::g] -= System::m_parameters[System::g_max] * (System::m_parameters[System::A_minus] * std::exp(time_left / System::m_parameters[System::tau_minus]));
-      } // g := g - g_max * (A- * exp(△t/ τ-))
-
-      // Restart time left until forgetting pre-synaptic spike
-      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
-    }
-
-    /* Limit growth */
-    if (System::m_variables[System::g] > System::m_parameters[System::g_max]) {
-      System::m_variables[System::g] = System::m_parameters[System::g_max];
-    }
-
-    /* Limit decay */
-    if (System::m_variables[System::g] < System::m_parameters[System::g_min]) {
-      System::m_variables[System::g] = System::m_parameters[System::g_min];
-    }
-
-    // Save states for the next step
-    m_last_value_pre = vpre;
-    m_last_value_post = vpost;
+    update_g(h);
 
     // Calculate synaptic current
     calculate_i();

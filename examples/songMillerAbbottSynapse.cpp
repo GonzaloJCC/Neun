@@ -39,10 +39,6 @@ int main(int argc, char **argv) {
   syn_args.params[Synapse::g_max] = 1;
   syn_args.params[Synapse::g_min] = 0;
   syn_args.params[Synapse::E_syn] = 0;
-  
-  // syn_args.variables[Synapse::g] = 0;
-  // syn_args.variables[Synapse::time_left_pre] = 0;
-  // syn_args.variables[Synapse::time_left_post] = 0;
 
 
   // Set the integration step
@@ -66,20 +62,23 @@ int main(int argc, char **argv) {
   s1.set_g(0.0052);
   s2.set_g(0.005);
 
-  // s1.set_time_left_pre(20);
-  // s1.set_time_left_post(20);
-  // s2.set_time_left_pre(20);
-  // s2.set_time_left_post(20);
+  // Initialize time_left_pre and time_left_post
+  s1.set_time_left_pre(0);
+  s1.set_time_left_post(0);
+  s2.set_time_left_pre(0);
+  s2.set_time_left_post(0);
 
-  std::cout << "Time vpre1 vpre2 vpost i1 i2 g1 g2 SUM(g)" << std::endl;
+  std::cout << "Time vpre1 vpre2 vpost i1 i2 g1 g2" << std::endl;
+
   int slower = 0;
   for (double time = 0; time < simulation_time; time += step) {
     s1.step(step, h1.get(HH::v), h2.get(HH::v));
     s2.step(step, h3.get(HH::v), h2.get(HH::v));
 
     h1.add_synaptic_input(0.6);
+    h3.add_synaptic_input(0.5);
 
-    if (slower == 10) {
+    if (slower == 50) {
       slower = 0;
     } else {
       h3.add_synaptic_input(0.5);
@@ -97,8 +96,7 @@ int main(int argc, char **argv) {
 
     std::cout << time << " " << h1.get(HH::v) << " " << h3.get(HH::v) << " " << h2.get(HH::v) << " " 
               << s1.get(Synapse::i) << " " << s2.get(Synapse::i) << " " 
-              << s1.get(Synapse::g) << " " << s2.get(Synapse::g) << " " 
-              << s1.get(Synapse::g) + s2.get(Synapse::g) << "\n";
+              << s1.get(Synapse::g) << " " << s2.get(Synapse::g) << "\n";
   }
 
   return 0;

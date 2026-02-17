@@ -3,8 +3,8 @@
 
 *************************************************************/
 
-#ifndef LINSKER_MODEL_H_
-#define LINSKER_MODEL_H_
+#ifndef LINSKER_SYNAPSE_MODEL_H_
+#define LINSKER_SYNAPSE_MODEL_H_
 
 #include "SynapseWeightNormalizer.h"
 
@@ -46,4 +46,4 @@ class LinskerSynapseModel {
     }
 };
 
-#endif /*LINSKER_MODEL_H_*/
+#endif /*LINSKER_SYNAPSE_MODEL_H_*/

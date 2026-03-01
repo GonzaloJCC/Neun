@@ -109,6 +109,18 @@ class LinskerSynapse
   ~LinskerSynapse() {
       Normalizer::get_instance().remove_synapse(this, &m_n2);
   }
+ private:
+
+  void calculate_i() {
+    System::m_parameters[System::i] = CURRENT_DIRECTION * System::m_variables[System::w] * System::m_parameters[System::v_post];
+  }
+  void update_w(precission h) {
+    for (int i = 0; i < m_steps; ++i) {
+      TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
+    }
+    Normalizer::get_instance().normalize_weights(this, &m_n2);
+  }
+ public:
 
   void step(precission h) {
 
@@ -116,12 +128,8 @@ class LinskerSynapse
     precission v_post = m_n2.get(m_n2_variable);
     System::m_parameters[System::v_post] = v_post;
     
-    for (int i = 0; i < m_steps; ++i) {
-      TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
-    }
-    Normalizer::get_instance().normalize_weights(this, &m_n2);
-    System::m_parameters[System::i] = CURRENT_DIRECTION * System::m_variables[System::w] * System::m_parameters[System::v_post];
-
+    update_w(h);
+    calculate_i();
   }
 
   void step(precission h, precission vpre, precission vpost) {
@@ -130,13 +138,8 @@ class LinskerSynapse
     precission v_post = vpost;
     System::m_parameters[System::v_post] = v_post;
     
-    for (int i = 0; i < m_steps; ++i) {
-      TIntegrator::step(*this, h, System::m_variables, System::m_parameters);
-    }
-    Normalizer::get_instance().normalize_weights(this, &m_n2);
-    System::m_parameters[System::i] = CURRENT_DIRECTION * System::m_variables[System::w] * System::m_parameters[System::v_post];
-
-    
+    update_w(h);
+    calculate_i();
   }
 
 

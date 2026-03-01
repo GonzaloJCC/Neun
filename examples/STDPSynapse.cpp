@@ -4,7 +4,7 @@
 *************************************************************/
 
 #include <DifferentialNeuronWrapper.h>
-#include <SongMillerAbbottSynapse.h>
+#include <STDPSynapse.h>
 #include <HodgkinHuxleyModel.h>
 #include <SystemWrapper.h>
 #include <RungeKutta4.h>
@@ -13,7 +13,7 @@
 
 typedef RungeKutta4 Integrator;
 typedef DifferentialNeuronWrapper<SystemWrapper<HodgkinHuxleyModel<double>>, Integrator> HH;
-typedef SongMillerAbbottSynapse<HH, HH, Integrator, double> Synapse;
+typedef STDPSynapse<HH, HH, Integrator, double> Synapse;
 
 int main(int argc, char **argv) {
 

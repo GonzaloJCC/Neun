@@ -2,8 +2,8 @@
 
 *************************************************************/
 
-#ifndef SONGMILLERABBOTTSYNAPSE_H_
-#define SONGMILLERABBOTTSYNAPSE_H_
+#ifndef STDPSYNAPSE_H_
+#define STDPSYNAPSE_H_
 
 #ifndef __AVR_ARCH__
 #include <type_traits>
@@ -12,7 +12,7 @@
 #include "NeuronConcept.h"
 #endif //__AVR_ARCH__
 
-#include "SongMillerAbbottSynapseModel.h"
+#include "STDPSynapseModel.h"
 #include "IntegratedSystemWrapper.h"
 #include "SerializableWrapper.h"
 #include "SystemWrapper.h"
@@ -27,10 +27,10 @@
 template <typename TNode1, typename TNode2, typename TIntegrator, typename precission = double>
 requires NeuronConcept<TNode1> && NeuronConcept<TNode2> &&
     IntegratorConcept<TIntegrator, SerializableWrapper<
-          SystemWrapper<SongMillerAbbottSynapseModel<precission> > > >
+          SystemWrapper<STDPSynapseModel<precission> > > >
 
-class SongMillerAbbottSynapse : public SerializableWrapper<
-          SystemWrapper<SongMillerAbbottSynapseModel<precission> > > {
+class STDPSynapse : public SerializableWrapper<
+          SystemWrapper<STDPSynapseModel<precission> > > {
  private:
   #ifndef __AVR_ARCH__
     static_assert(std::is_floating_point<precission>::value);
@@ -47,7 +47,7 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
 
 
   typedef SerializableWrapper<
-      SystemWrapper<SongMillerAbbottSynapseModel<precission> > > System;
+      SystemWrapper<STDPSynapseModel<precission> > > System;
 
   const int m_steps;
 
@@ -57,7 +57,7 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
   typedef typename System::parameter parameter;
   typedef typename System::ConstructorArgs ConstructorArgs;
 
-  SongMillerAbbottSynapse (TNode1 const &n1, typename TNode1::variable v1,
+  STDPSynapse (TNode1 const &n1, typename TNode1::variable v1,
                                               TNode2 &n2, typename TNode2::variable v2, 
                                               ConstructorArgs &args, int steps)
       : m_n1(n1),
@@ -71,8 +71,8 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
           }
         }
 
-  SongMillerAbbottSynapse (TNode1 const &n1, TNode2 &n2,
-                            SongMillerAbbottSynapse  const &synapse)
+  STDPSynapse (TNode1 const &n1, TNode2 &n2,
+                            STDPSynapse  const &synapse)
       : m_n1(n1),
         m_n2(n2),
         m_n1_variable(synapse.m_n1_variable),
@@ -190,4 +190,4 @@ class SongMillerAbbottSynapse : public SerializableWrapper<
   }
 };
 
-#endif /*SONGMILLERABBOTTSYNAPSE_H_*/
+#endif /*STDPSYNAPSE_H_*/

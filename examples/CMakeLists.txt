@@ -16,5 +16,5 @@ target_link_libraries(simpleSynapsisPlasticity)
 add_executable(linskerSynapse linskerSynapse.cpp)
 target_link_libraries(linskerSynapse)
 
-add_executable(songMillerAbbottSynapse songMillerAbbottSynapse.cpp)
-target_link_libraries(songMillerAbbottSynapse)
+add_executable(STDPSynapse STDPSynapse.cpp)
+target_link_libraries(STDPSynapse)

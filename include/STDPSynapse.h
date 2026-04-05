@@ -37,7 +37,11 @@ class STDPSynapse : public SerializableWrapper<
   #endif  //__AVR_ARCH__
 
   precission m_release_time;
-
+  precission m_vpre_old;
+  precission m_vpost_old;
+  precission m_current_time;
+  precission m_last_spike_pre;
+  precission m_last_spike_post;
   TNode1 const &m_n1;
   TNode2 &m_n2;
 
@@ -69,6 +73,11 @@ class STDPSynapse : public SerializableWrapper<
           for(int i = 0; i < System::n_variables; i++) {
             System::m_variables[i] = 0;
           }
+          m_vpre_old = System::m_parameters[System::spike_threshold] -999;
+          m_vpost_old = System::m_parameters[System::spike_threshold] -999;
+          m_current_time = 0.0;
+          m_last_spike_pre = -999;
+          m_last_spike_post = -999;
         }
 
   STDPSynapse (TNode1 const &n1, TNode2 &n2,
@@ -82,6 +91,11 @@ class STDPSynapse : public SerializableWrapper<
           for(int i = 0; i < System::n_variables; i++) {
             System::m_variables[i] = 0;
           }
+          m_vpre_old = System::m_parameters[System::spike_threshold] -999;
+          m_vpost_old = System::m_parameters[System::spike_threshold] -999;
+          m_current_time = 0.0;
+          m_last_spike_pre = -999;
+          m_last_spike_post = -999;
         }
  private:
   void calculate_i() {
@@ -93,44 +107,42 @@ class STDPSynapse : public SerializableWrapper<
   }
 
   void update_g(precission h) {
-
+    
+    // Update internal simulation clock
+    m_current_time += h;
     precission threshold = System::m_parameters[System::spike_threshold];
-    int activation_flag = 0; // Flag to update g only if the spike has just occurred
+
     // Detect spikes // ----------------------------------------------------------------------------------
      
     // For vpre
-    if (System::m_parameters[System::v_pre] >= threshold && System::m_variables[System::time_left_pre] <= 0) {
-      System::m_variables[System::time_left_pre] = System::m_parameters[System::tau_plus];
-      activation_flag = 1;
+    if (System::m_parameters[System::v_pre] >= threshold && m_vpre_old < threshold) {
+      m_last_spike_pre = m_current_time;
       System::m_variables[System::s] = 1.0; // Update s if vpre spikes
+      
+      // △t = t_pre - t_post
+      precission delta_t = m_last_spike_pre - m_last_spike_post; 
+
+      // LTD {F(△t) = (-A- * exp(-△t/ τ-)) if △t > 0}
+      if (delta_t > 0) {
+        precission f_delta_t = (-System::m_parameters[System::A_minus] * std::exp(-delta_t / System::m_parameters[System::tau_minus]));
+        System::m_variables[System::g] += f_delta_t; // g := g + F(△t)
+      }
     }
 
     // For vpost
-    if (System::m_parameters[System::v_post] >= threshold && System::m_variables[System::time_left_post] <= 0) {
-      System::m_variables[System::time_left_post] = System::m_parameters[System::tau_minus];
-      activation_flag = 1;
+    if (System::m_parameters[System::v_post] >= threshold && m_vpost_old < threshold) {
+      m_last_spike_post = m_current_time;
+      
+      // △t = t_pre - t_post
+      precission delta_t = m_last_spike_pre - m_last_spike_post; 
+
+      // LTP {F(△t) = (A+ * exp(△t/ τ+)) if △t < 0}
+      if (delta_t < 0) {
+        precission f_delta_t = (System::m_parameters[System::A_plus] * std::exp(delta_t / System::m_parameters[System::tau_plus]));
+        System::m_variables[System::g] += f_delta_t; // g := g + F(△t)
+      }
     }
     // ---------------------------------------------------------------------------------------------------
-
-    precission delta_t = 0;
-    precission f_delta_t = 0;
-    // When both neurons spiked
-    if (activation_flag && System::m_variables[System::time_left_post] > 0 && System::m_variables[System::time_left_pre] > 0) {
-      delta_t = System::m_variables[System::time_left_pre] - System::m_variables[System::time_left_post];
-      // △t = t_pre - t_post
-    }
-
-    // LTP {F(△t) = (A+ * exp(△t/ τ+)) if △t < 0}
-    if (delta_t < 0) {
-      f_delta_t = (System::m_parameters[System::A_plus] * std::exp(delta_t / System::m_parameters[System::tau_plus]));
-    }
-
-    // LTD {F(△t) = (-A- * exp(-△t/ τ-)) if △t > 0}
-    if (delta_t > 0) {
-      f_delta_t = (-System::m_parameters[System::A_minus] * std::exp(-delta_t / System::m_parameters[System::tau_minus]));
-    }
-
-    System::m_variables[System::g] += f_delta_t; // g := g + F(△t)
 
     /* Limit growth */
     if (System::m_variables[System::g] > System::m_parameters[System::g_max]) {
@@ -141,6 +153,10 @@ class STDPSynapse : public SerializableWrapper<
     if (System::m_variables[System::g] < System::m_parameters[System::g_min]) {
       System::m_variables[System::g] = System::m_parameters[System::g_min];
     }
+
+    // Save previous voltages for the next integration step
+    m_vpre_old = System::m_parameters[System::v_pre];
+    m_vpost_old = System::m_parameters[System::v_post];
   }
 
  public:

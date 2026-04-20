@@ -41,8 +41,6 @@ int main(int argc, char **argv) {
   syn_args.params[Synapse::E_syn] = 0;
   syn_args.params[Synapse::tau_syn] = 5;
 
-
-
   // Set the integration step
   const double step = 0.005;
   double simulation_time = 10000;
@@ -64,12 +62,6 @@ int main(int argc, char **argv) {
   s1.set_g(0.0052);
   s2.set_g(0.005);
 
-  // Initialize time_left_pre and time_left_post
-  s1.set_time_left_pre(0);
-  s1.set_time_left_post(0);
-  s2.set_time_left_pre(0);
-  s2.set_time_left_post(0);
-
   std::cout << "Time vpre1 vpre2 vpost i1 i2 g1 g2" << std::endl;
 
   int slower = 0;
@@ -79,14 +71,6 @@ int main(int argc, char **argv) {
 
     h1.add_synaptic_input(0.6);
     h3.add_synaptic_input(0.5);
-
-    // if (slower == 50) {
-    //   slower = 0;
-    // } else {
-    //   h3.add_synaptic_input(0.5);
-    //   slower++;
-    // }
-    
 
     h2.add_synaptic_input(0.5);
     h2.add_synaptic_input(s1.get(Synapse::i));

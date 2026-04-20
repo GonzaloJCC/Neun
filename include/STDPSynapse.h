@@ -36,7 +36,6 @@ class STDPSynapse : public SerializableWrapper<
     static_assert(std::is_floating_point<precission>::value);
   #endif  //__AVR_ARCH__
 
-  precission m_release_time;
   precission m_vpre_old;
   precission m_vpost_old;
   precission m_current_time;
@@ -197,13 +196,6 @@ class STDPSynapse : public SerializableWrapper<
     System::m_variables[System::g] = g;
   }
 
-  void set_time_left_pre(precission time_left_pre) {
-    System::m_variables[System::time_left_pre] = time_left_pre;
-  }
-
-  void set_time_left_post(precission time_left_post) {
-    System::m_variables[System::time_left_post] = time_left_post;
-  }
 };
 
 #endif /*STDPSYNAPSE_H_*/

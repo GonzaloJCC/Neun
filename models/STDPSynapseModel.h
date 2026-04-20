@@ -18,8 +18,6 @@ class STDPSynapseModel {
   public:
     enum variable {
       g,              // Synaptic conductance (w)
-      time_left_pre,  // Time left until synapse forgets presynaptic spike
-      time_left_post, // Time left until synapse forgets postsynaptic spike
       s,              // Synaptic gating variable
       n_variables
     };
@@ -48,12 +46,6 @@ class STDPSynapseModel {
     /* Decrement the time left until the synapse forgets the presynaptic or postsynaptic spike*/
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
-
-      if (vars[time_left_pre] > 0) incs[time_left_pre] = -1; // d(time_left_pre)/dt = -1
-      else incs[time_left_pre] = 0;
-
-      if (vars[time_left_post] > 0) incs[time_left_post] = -1; // d(time_left_post)/dt = -1
-      else incs[time_left_post] = 0;
 
       incs[g] = 0; // d(g)/dt = 0
 

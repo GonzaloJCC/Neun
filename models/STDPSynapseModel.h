@@ -43,7 +43,6 @@ class STDPSynapseModel {
   public:
     STDPSynapseModel() {}
 
-    /* Decrement the time left until the synapse forgets the presynaptic or postsynaptic spike*/
     void eval(const precission* const vars, const precission* const params,
               precission* const incs) const {
 
